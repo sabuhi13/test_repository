@@ -1,0 +1,15 @@
+{
+    "autoload": {
+        "psr-4": {
+            "Saboohy\\Conductor\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Saboohy\\Conductor\\Test\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    }
+}
