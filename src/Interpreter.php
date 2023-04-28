@@ -4,5 +4,8 @@ namespace Saboohy\Conductor;
 
 abstract class Interpreter
 {
-    
+    protected function initPath(string $path) : string
+    {
+
+    }
 }

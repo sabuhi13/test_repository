@@ -13,6 +13,6 @@ abstract class Collection extends Collector
      */
     public function use(string $controller = "") : void
     {
-        $this->registerController($controller);
+        $this->buildComponent($controller);
     }
 }

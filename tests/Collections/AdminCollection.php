@@ -6,7 +6,7 @@ use Saboohy\Conductor\Collection;
 use Saboohy\Conductor\Test\Middlewares\GeneralMiddleware;
 use Saboohy\Conductor\Test\Controllers\{
     BasicController,
-    FullController
+    FullComlpetedController
 };
 
 final class AdminCollection extends Collection
@@ -16,7 +16,7 @@ final class AdminCollection extends Collection
      * 
      * @var string
      */
-    protected string $prefix = "/admin";
+    protected string $prefix = "admin";
 
     /**
      * General middleware
@@ -33,6 +33,6 @@ final class AdminCollection extends Collection
     protected function collect() : void
     {
         // $this->use(BasicController::class);
-        $this->use(FullController::class);
+        $this->use(controller: FullComlpetedController::class, make_prefix: true);
     }
 }

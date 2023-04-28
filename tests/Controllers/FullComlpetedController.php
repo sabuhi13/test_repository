@@ -20,7 +20,7 @@ use Saboohy\Conductor\Test\Middlewares\{
     Prefix("/full"),
     Middleware(GeneralControllerMiddleware::class)
 ]
-class FullController
+class FullComlpetedController
 {
     #[
         Route("get", "/"),
