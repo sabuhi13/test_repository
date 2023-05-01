@@ -3,6 +3,7 @@
 namespace Saboohy\Conductor;
 
 use function preg_match_all;
+use function preg_match;
 
 final class Utils
 {
@@ -16,11 +17,8 @@ final class Utils
         return (bool) preg_match_all("/{([a-z_:]+)}/", $uri);
     }
 
-    /**
-     * 
-     */
-    public static function makeRouteName(string $general_prefix = "", string $controller_name = "", string $action_name = "") : string
+    public static function isPrefixable(string $prefix = "") : bool
     {
-        
+        return (bool) preg_match("/(?:[a-z]{1,})/i", $prefix);
     }
 }

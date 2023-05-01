@@ -33,6 +33,6 @@ final class AdminCollection extends Collection
     protected function collect() : void
     {
         // $this->use(BasicController::class);
-        $this->use(controller: FullComlpetedController::class, make_prefix: true);
+        $this->use(FullComlpetedController::class);
     }
 }

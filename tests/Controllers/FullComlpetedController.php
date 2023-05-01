@@ -4,7 +4,6 @@ namespace Saboohy\Conductor\Test\Controllers;
 
 use Saboohy\Conductor\Attributes\{
     Middleware,
-    Prefix,
     Route
 };
 use Saboohy\Conductor\Test\Middlewares\{
@@ -16,10 +15,7 @@ use Saboohy\Conductor\Test\Middlewares\{
     DeleteMiddleware
 };
 
-#[
-    Prefix("/full"),
-    Middleware(GeneralControllerMiddleware::class)
-]
+#[Middleware(GeneralControllerMiddleware::class)]
 class FullComlpetedController
 {
     #[

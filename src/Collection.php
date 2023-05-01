@@ -11,8 +11,8 @@ abstract class Collection extends Collector
      * 
      * @return void
      */
-    public function use(string $controller = "") : void
+    public function use(string $controller = "", bool $make_prefix = true) : void
     {
-        $this->buildComponent($controller);
+        $this->build($controller, $make_prefix);
     }
 }
