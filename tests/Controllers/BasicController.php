@@ -38,4 +38,10 @@ class BasicController
     {
 
     }
+
+    #[Route("get", "/test")]
+    public function testCamelCasedMethod()
+    {
+
+    }
 }

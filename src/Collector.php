@@ -57,10 +57,10 @@ abstract class Collector extends Interpreter
     {
         $class = new ReflectionClass($controller);
 
-        $route_path = "";
-        $prefixes = [];
+        $route_path         = "";
+        $prefixes           = [];
 
-        $middlewares = [];
+        $middlewares        = [];
         $general_middleware = null;
         
         if ( property_exists($this, "prefix") && Utils::isPrefixable($this->prefix) ) {
@@ -187,12 +187,15 @@ abstract class Collector extends Interpreter
      */
     private function buildRouteDetails(array|string ...$args) : array
     {
-        $action = array_merge_recursive($args["general_middleware"], $args["action_middleware"]);
-        $action[] = $args["action_handler"];
+        extract($args);
 
-        $args["prefixes"][] = $args["action_method"];
-        
-        $name = implode("_", $args["prefixes"]);
+        $action = array_merge_recursive($general_middleware, $action_middleware);
+        $action[] = $action_handler;
+
+        // $prefixes[] = $this->generateUriFromObjectName($action_method, "method");
+        $prefixes[] = $action_method;
+
+        $name = implode("_", $prefixes);
         
         return [
             "action" => $action,

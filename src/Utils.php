@@ -21,4 +21,9 @@ final class Utils
     {
         return (bool) preg_match("/(?:[a-z]{1,})/i", $prefix);
     }
+
+    public static function isCamelCased(string $prefix = "") : bool
+    {
+        return (bool) preg_match("/^(?:[a-z]+)$/", $prefix);
+    }
 }
