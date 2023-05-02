@@ -77,20 +77,16 @@ abstract class Collector extends Interpreter
          *-------------------------------------------------------------*/
         if ( $make_prefix ) {
 
-            # Get parts of controller name
             preg_match_all(
                 "/([A-Z]{1}[a-z]+)/", 
                 $class->getShortName(), 
                 $matched_parts
             );
 
-            # Last object
             $matched_parts = end($matched_parts);
 
-            # Remove "Controller"
             array_pop($matched_parts);
 
-            # Convert to lower
             $matched_parts = array_map(
                 fn($part) => strtolower($part),
                 $matched_parts
@@ -120,7 +116,6 @@ abstract class Collector extends Interpreter
             $middlewares[] = $general_middleware;
         }
 
-        # 
         /*-------------------------------------------------------------*
          | Checking and collecting class attributes                    |
          | ------------------------------------------------------------|
@@ -160,7 +155,7 @@ abstract class Collector extends Interpreter
 
             $used_attributes_on_method  = [];
 
-            foreach ($class_method_attributes as $class_method_attribute) {
+            foreach ( $class_method_attributes as $class_method_attribute ) {
                 $used_attributes_on_method[$class_method_name][] = $class_method_attribute->getName();
             }
 
@@ -169,9 +164,40 @@ abstract class Collector extends Interpreter
                     throw new \Exception("Unexpected attribute on $class_method_name method");
                 }
             }
-        }
 
-        var_dump($route_path);     
+            # Collecting method middlewares
+            $get_method_middlewares = $class_method->getAttributes(Middleware::class);
+
+            if ( count($get_method_middlewares) > 0 ) {
+                $method_middlewares = $get_method_middlewares[0]->getArguments();
+            }
+
+            # Getting route
+            $method_route = $class_method->getAttributes(Route::class);
+
+            if ( empty($method_route) ) {
+                throw new \Exception("Not used Route attribute");
+            }
+
+            $route_args = $method_route[0]->getArguments();
+
+            $is_parametrized_route = isset($route_args[0]) && isset($route_args[1]);     
+            
+            if ( !$is_parametrized_route ) {
+                throw new \Exception("Route is not parametrized");
+            }
+
+            [$action_method, $action_path] = $route_args;
+
+            $this->routes[strtoupper($action_method)][$route_path.$action_path] = [
+                "action" => $this->makeAction(
+                    $middlewares,
+                    isset($method_middlewares) ? array_map(fn($method_middleware) => [$method_middleware, "handle"], $method_middlewares) : [],
+                    [$class->getName(), $class_method->getName()]
+                ),
+                "name" => implode("_", array_values($prefixes)) . "_" . $class_method_name
+            ];
+        }     
     }
 
     /**
@@ -181,32 +207,6 @@ abstract class Collector extends Interpreter
      */
     protected function registerController(string $controller = "") : void
     {
-        $class = new ReflectionClass($controller);
-
-        // $general_prefix = property_exists($this, "prefix") ? $this->prefix : "";
-        $prefix = "";
-
-        // $class_prefixes = $class->getAttributes(Prefix::class);
-
-        // if ( count($class_prefixes) > 0 ) {
-        //     $prefix = $general_prefix.$class_prefixes[0]->getArguments()[0];
-        // }
-
-        $general_middleware = property_exists($this, "middleware") ? $this->middleware : "";
-
-        $general_middlewares = [];
-
-        if ( !empty($general_middleware) ) {
-            $general_middlewares[] = [$general_middleware, "handle"];
-        }
-
-        $class_middlewares = $class->getAttributes(Middleware::class);
-        $general_controller_middlewares = array_map(fn($row) => [$row, "handle"], $class_middlewares[0]->getArguments());
-
-        if ( count($class_middlewares) > 0 ) {
-            $general_middlewares = array_merge_recursive($general_middlewares, $general_controller_middlewares);
-        }
-
         foreach ( $class->getMethods() as $class_method ) {
 
             [$action_method, $action_path] = $class_method->getAttributes(Route::class)[0]->getArguments();
@@ -222,8 +222,6 @@ abstract class Collector extends Interpreter
                 "name"      => ""
             ];
         }
-
-        print_r($this->map);
     }
 
     private function makeAction($general_middleware, $action_middleware, $action_handler)

@@ -135,7 +135,7 @@ final class CollectionTest extends TestCase
 
         $array_must_be = array_merge_recursive($basicControllerClass, $fullControllerClass);
 
-        // var_dump($adminCollection->controllers());
+        print_r($adminCollection->routes());
     }
 
     // public function testInitialCollection()

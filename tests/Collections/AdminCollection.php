@@ -16,7 +16,7 @@ final class AdminCollection extends Collection
      * 
      * @var string
      */
-    protected string $prefix = "admin";
+    protected string $prefix = "";
 
     /**
      * General middleware
@@ -33,6 +33,6 @@ final class AdminCollection extends Collection
     protected function collect() : void
     {
         // $this->use(BasicController::class);
-        $this->use(FullComlpetedController::class);
+        $this->use(FullComlpetedController::class, false);
     }
 }

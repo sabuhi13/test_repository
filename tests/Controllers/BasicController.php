@@ -7,7 +7,6 @@ use Saboohy\Conductor\Attributes\{
     Route
 };
 
-#[Prefix("/basic")]
 class BasicController
 {
     #[Route("get", "/")]
