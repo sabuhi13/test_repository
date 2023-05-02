@@ -190,7 +190,7 @@ abstract class Collector extends Interpreter
         $action = array_merge_recursive($args["general_middleware"], $args["action_middleware"]);
         $action[] = $args["action_handler"];
 
-        $prefixes[] = $args["action_method"];
+        $args["prefixes"][] = $args["action_method"];
         
         $name = implode("_", $args["prefixes"]);
         
