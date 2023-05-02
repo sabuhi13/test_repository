@@ -67,9 +67,7 @@ abstract class Collector extends Interpreter
             $prefixes["general_prefix"] = $this->prefix;
         }
 
-        /*-------------------------------------------------------------*
-         | Making auto prefix from controller name                     |
-         *-------------------------------------------------------------*/
+        # Making auto prefix from controller name
         if ( $make_prefix ) {
 
             preg_match_all(
@@ -90,16 +88,12 @@ abstract class Collector extends Interpreter
             $prefixes["controller_prefix"] = implode("_", $matched_parts);
         }
         
-        /*-------------------------------------------------------------*
-         | Building route path                                         |
-         *-------------------------------------------------------------*/
+        # Building route path
         if ( !empty($prefixes) ) {
             $route_path = implode("/", array_values($prefixes));
         }
 
-        /*-------------------------------------------------------------*
-         | Seting general middleware                                   |
-         *-------------------------------------------------------------*/
+        # Seting general middleware
         if ( property_exists($this, "middleware") ) {
 
             if ( !class_exists($this->middleware) ) {
@@ -111,11 +105,7 @@ abstract class Collector extends Interpreter
             $middlewares[] = $general_middleware;
         }
 
-        /*-------------------------------------------------------------*
-         | Checking and collecting class attributes                    |
-         | ------------------------------------------------------------|
-         | * Expecting only Middleware                                 |
-         *-------------------------------------------------------------*/
+        # Checking and collecting class attributes
         $class_attributes = $class->getAttributes();
 
         if ( count($class_attributes) > 0 ) {
@@ -138,11 +128,7 @@ abstract class Collector extends Interpreter
             }
         }
 
-        /*-------------------------------------------------------------*
-         | Checking and collecting method attributes                   |
-         |-------------------------------------------------------------|
-         | * Expecting Route and Middleware                            |
-         *-------------------------------------------------------------*/
+        # Checking and collecting method attributes
         foreach ( $class->getMethods() as $class_method ) {
 
             $class_method_name          = $class_method->getName();
