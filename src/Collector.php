@@ -36,11 +36,6 @@ abstract class Collector extends Interpreter
     ];
 
     /**
-     * 
-     */
-    private array $map = [];
-
-    /**
      * Routes
      * 
      * @var array
@@ -189,48 +184,34 @@ abstract class Collector extends Interpreter
 
             [$action_method, $action_path] = $route_args;
 
-            $this->routes[strtoupper($action_method)][$route_path.$action_path] = [
-                "action" => $this->makeAction(
-                    $middlewares,
-                    isset($method_middlewares) ? array_map(fn($method_middleware) => [$method_middleware, "handle"], $method_middlewares) : [],
-                    [$class->getName(), $class_method->getName()]
-                ),
-                "name" => implode("_", array_values($prefixes)) . "_" . $class_method_name
-            ];
+            $this->routes[strtoupper($action_method)][$route_path.$action_path] = $this->buildRouteDetails(
+                general_middleware:     $middlewares,
+                action_middleware:      isset($method_middlewares) ? array_map(fn($method_middleware) => [$method_middleware, "handle"], $method_middlewares) : [],
+                action_handler:         [$class->getName(), $class_method->getName()],
+                prefixes:               array_values($prefixes),
+                action_method:          $class_method_name
+            );
         }     
     }
 
     /**
-     * @param string $controller
+     * @param array<array,string> $args
      * 
-     * @return void
+     * @return array
      */
-    protected function registerController(string $controller = "") : void
+    private function buildRouteDetails(array|string ...$args) : array
     {
-        foreach ( $class->getMethods() as $class_method ) {
+        $action = array_merge_recursive($args["general_middleware"], $args["action_middleware"]);
+        $action[] = $args["action_handler"];
 
-            [$action_method, $action_path] = $class_method->getAttributes(Route::class)[0]->getArguments();
-
-            $action_middlewares = $class_method->getAttributes(Middleware::class)[0]->getArguments();
-
-            $this->map[$class->getShortName()][strtoupper($action_method)][$prefix.$action_path] = [
-                "action"    => $this->makeAction(
-                    $general_middlewares,
-                    array_map(fn($row) => [$row, "handle"], $action_middlewares),
-                    [$class->getName(), $class_method->getName()]
-                ),
-                "name"      => ""
-            ];
-        }
-    }
-
-    private function makeAction($general_middleware, $action_middleware, $action_handler)
-    {
-        $action = array_merge_recursive($general_middleware, $action_middleware);
-
-        $action[] = $action_handler;
-
-        return $action;
+        $prefixes[] = $args["action_method"];
+        
+        $name = implode("_", $args["prefixes"]);
+        
+        return [
+            "action" => $action,
+            "name" => $name
+        ];
     }
 
     /**
